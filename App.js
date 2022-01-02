@@ -22,7 +22,7 @@ const App: () => Node = () => {
 
     useEffect(() => {
         setRewardDoor(randomRewardGenerator);
-    },[]);
+    }, []);
 
     useEffect(() => {
         console.log(doorText)
@@ -39,23 +39,39 @@ const App: () => Node = () => {
     //0,1,2
     const handleDoorClick = (event, doorNo: Number) => {
         openDoor(doorNo);
+
     };
 
+    const openNotSelectedWrongDoor = (doorNo: Number) => {
+        let wrongDoorToOpen:Number =  [0, 1, 2].filter(d=> d !== doorNo && d!== rewardDoor)[0];
+        openDoor(wrongDoorToOpen);
+    }
+
     const openDoor = (doorNo: Number) => {
-        let oldDoorTextList :Array = [...doorText];
+        let oldDoorTextList: Array = [...doorText];
         if (doorNo === rewardDoor) {
             alert('You win a CAR!');
             oldDoorTextList[doorNo] = 'CAR';
         } else {
-            oldDoorTextList[doorNo] = 'OPENED';
+            //monty hall scenario
+            // oldDoorTextList[doorNo] = 'GOAT';
+
+            //monty opens this door:
+            let wrongDoorToOpen:Number =  [0, 1, 2].filter(d=> d !== doorNo && d!== rewardDoor)[0];
+
+            //remaining two which might contain a reward
+            let mightHaveRewardDoorList : Array = [];
+            mightHaveRewardDoorList.push([0,1,2].filter(d=> d !== wrongDoorToOpen));
+
+            oldDoorTextList[wrongDoorToOpen] = 'GOAT';
         }
 
-        setDoorText(oldDoorTextList) ;
+        setDoorText(oldDoorTextList);
     };
 
     return (
         <View style={styles.doorContainer}>
-            <Text>{rewardDoor}</Text>
+            {/*<Text>{rewardDoor}</Text>*/}
             <TouchableOpacity onPress={(event) => handleDoorClick(event, 0)} style={styles.door}>
                 <Text>{doorText[0]}</Text>
             </TouchableOpacity>
